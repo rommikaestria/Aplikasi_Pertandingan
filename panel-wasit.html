@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Scoreboard - STMIK Palangkaraya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-6">
+
+    <div class="text-center mb-8">
+        <h1 class="text-xl font-bold text-yellow-500 uppercase italic">Control Panel Wasit</h1>
+    </div>
+
+    <div class="bg-gray-800 rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-gray-700">
+        <div class="flex items-center justify-between gap-4 text-center">
+
+            <div class="flex-1">
+                <h2 class="text-lg font-bold text-blue-400" id="name-a">Andi / Sari</h2>
+                <div class="text-8xl font-black my-4" id="score-a">0</div>
+                <button onclick="updateScore('a', 1)"
+                    class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold transition-all active:scale-95">+
+                    POIN</button>
+            </div>
+
+            <div class="text-gray-500 font-bold">VS</div>
+
+            <div class="flex-1">
+                <h2 class="text-lg font-bold text-red-400" id="name-b">Budi / Rani</h2>
+                <div class="text-8xl font-black my-4" id="score-b">0</div>
+                <button onclick="updateScore('b', 1)"
+                    class="w-full bg-red-600 hover:bg-red-500 py-4 rounded-xl font-bold transition-all active:scale-95">+
+                    POIN</button>
+            </div>
+        </div>
+
+        <div class="mt-8 flex gap-2">
+            <button onclick="resetScore()" class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg text-sm">Reset
+                Skor</button>
+            <button onclick="alert('Pertandingan Selesai!')"
+                class="flex-1 bg-green-700 hover:bg-green-600 py-2 rounded-lg text-sm">Selesai & Simpan</button>
+        </div>
+    </div>
+
+    <script>
+        const defaultData = {
+            current_match: {
+                team_a: "Andi / Sari",
+                team_b: "Budi / Rani",
+                score_a: 0,
+                score_b: 0,
+                set: 1
+            }
+        };
+
+        // Ambil data dari localStorage atau gunakan default
+        let matchData = JSON.parse(localStorage.getItem('tournamentData')) || defaultData;
+
+        function render() {
+            document.getElementById('name-a').innerText = matchData.current_match.team_a;
+            document.getElementById('name-b').innerText = matchData.current_match.team_b;
+            document.getElementById('score-a').innerText = matchData.current_match.score_a;
+            document.getElementById('score-b').innerText = matchData.current_match.score_b;
+        }
+
+        // Fungsi Update Skor
+        function updateScore(team, val) {
+            if (team === 'a') {
+                matchData.current_match.score_a += val;
+                // Cegah skor negatif
+                if(matchData.current_match.score_a < 0) matchData.current_match.score_a = 0;
+            } else {
+                matchData.current_match.score_b += val;
+                // Cegah skor negatif
+                if(matchData.current_match.score_b < 0) matchData.current_match.score_b = 0;
+            }
+            saveAndRender();
+        }
+
+        // Fungsi Reset
+        function resetScore() {
+            if (confirm("Reset skor kembali ke 0?")) {
+                matchData.current_match.score_a = 0;
+                matchData.current_match.score_b = 0;
+                saveAndRender();
+            }
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('tournamentData', JSON.stringify(matchData));
+            render();
+        }
+
+        // Jalankan saat pertama kali buka
+        render();
+    </script>
+</body>
+
+</html>

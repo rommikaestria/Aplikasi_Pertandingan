@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard - Dies Natalis STMIK Palangkaraya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white font-sans">
+
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-yellow-500 uppercase tracking-widest">Live Score</h1>
+            <p class="text-gray-400">Ganda Campuran - Meja 1</p>
+        </div>
+
+        <div class="bg-gray-800 rounded-3xl shadow-2xl p-8 w-full max-w-4xl border border-gray-700">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+
+                <div class="flex flex-col items-center flex-1">
+                    <div
+                        class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-lg">
+                        A
+                    </div>
+                    <h2 id="name-a" class="text-xl font-semibold text-center leading-tight">Pasangan Andi / Sari</h2>
+                    <span class="text-7xl font-black mt-4 text-blue-400" id="score-a">11</span>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <div class="text-gray-500 font-bold text-xl uppercase italic">VS</div>
+                    <div id="set-info" class="mt-2 bg-gray-700 px-4 py-1 rounded-full text-xs font-mono uppercase tracking-tighter">
+                        Set 2
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center flex-1">
+                    <div
+                        class="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-lg">
+                        B
+                    </div>
+                    <h2 id="name-b" class="text-xl font-semibold text-center leading-tight">Pasangan Budi / Rani</h2>
+                    <span class="text-7xl font-black mt-4 text-red-400" id="score-b">09</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div
+            class="mt-10 w-full max-w-md bg-gray-800/50 p-4 rounded-xl border border-dashed border-gray-600 text-center">
+            <p class="text-sm text-gray-400 uppercase font-semibold">Berikutnya (Antrean):</p>
+            <p class="text-lg font-medium text-yellow-200">Tim C vs Tim D</p>
+            <p class="text-xs text-gray-500 mt-1 italic">Estimasi main: 15 menit lagi</p>
+        </div>
+
+    </div>
+
+    <script>
+        const defaultData = {
+            current_match: {
+                team_a: "Andi / Sari",
+                team_b: "Budi / Rani",
+                score_a: 0,
+                score_b: 0,
+                set: 1
+            }
+        };
+
+        function updateUI() {
+            let matchData = JSON.parse(localStorage.getItem('tournamentData')) || defaultData;
+            document.getElementById('name-a').innerText = matchData.current_match.team_a;
+            document.getElementById('name-b').innerText = matchData.current_match.team_b;
+            
+            // Format skor agar jadi 2 digit (00, 01, dst.)
+            let scoreA = matchData.current_match.score_a.toString().padStart(2, '0');
+            let scoreB = matchData.current_match.score_b.toString().padStart(2, '0');
+            
+            document.getElementById('score-a').innerText = scoreA;
+            document.getElementById('score-b').innerText = scoreB;
+            document.getElementById('set-info').innerText = "Set " + matchData.current_match.set;
+        }
+
+        // Sinkronisasi otomatis tanpa refresh saat panel admin (index.html) diperbarui
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'tournamentData') {
+                updateUI();
+            }
+        });
+
+        // Jalankan saat pertama kali buka
+        updateUI();
+    </script>
+</body>
+
+</html>
