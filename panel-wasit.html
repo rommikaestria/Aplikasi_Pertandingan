@@ -49,7 +49,7 @@
         <div class="mt-8 flex gap-2">
             <button onclick="resetScore()" class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg text-sm">Reset
                 Skor</button>
-            <button onclick="alert('Pertandingan Selesai!')"
+            <button onclick="alert('Pertandingan Sudah Selesai!')"
                 class="flex-1 bg-green-700 hover:bg-green-600 py-2 rounded-lg text-sm">Selesai & Simpan</button>
         </div>
     </div>
@@ -80,11 +80,11 @@
             if (team === 'a') {
                 matchData.current_match.score_a += val;
                 // Cegah skor negatif
-                if(matchData.current_match.score_a < 0) matchData.current_match.score_a = 0;
+                if (matchData.current_match.score_a < 0) matchData.current_match.score_a = 0;
             } else {
                 matchData.current_match.score_b += val;
                 // Cegah skor negatif
-                if(matchData.current_match.score_b < 0) matchData.current_match.score_b = 0;
+                if (matchData.current_match.score_b < 0) matchData.current_match.score_b = 0;
             }
             saveAndRender();
         }
