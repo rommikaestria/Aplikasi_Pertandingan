@@ -9,7 +9,7 @@ def seed_data():
     c.execute("DELETE FROM tabel_pertandingan")
     c.execute("DELETE FROM tabel_skor_live")
     
-    cabang = "Bulu Tangkis Ganda Campuran"
+    cabang = "Ganda Putra pertandingan basket"
     
     # 1. Insert 8 Tim Dummy
     tim_dummies = [

@@ -3,39 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Turnamen Olahraga</title>
+    <title>Portal Turnamen Olahraga</title>
     <link rel="stylesheet" href="css/style.css">
-    <meta name="description" content="Pendaftaran Sistem Informasi Pertandingan Olahraga">
+    <style>
+        .portal-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            text-align: center;
+        }
+        .hero {
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hero h1 {
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            animation-fill-mode: both;
+        }
+        /* Staggered animation */
+        .menu-card:nth-child(1) { animation-delay: 0.1s; }
+        .menu-card:nth-child(2) { animation-delay: 0.2s; }
+        .menu-card:nth-child(3) { animation-delay: 0.3s; }
+        .menu-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .menu-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2));
+            transition: transform 0.3s ease;
+        }
+        .menu-card:hover .menu-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .menu-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.light-mode .menu-title {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .menu-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="glass-card">
-        <h1 class="title">Turnamen Cup</h1>
-        <p class="subtitle">Registrasi Tim Baru</p>
+    <div class="portal-container">
+        <div class="hero">
+            <h1 class="title" style="font-size: 3.5rem;">Sistem Informasi Pertandingan</h1>
+            <p>Pusat kontrol dan informasi turnamen olahraga terpadu. Silakan pilih menu di bawah ini untuk memulai.</p>
+        </div>
 
-        <form id="formDaftar">
-            <div class="form-group">
-                <label for="nama_tim">Nama Tim / Peserta</label>
-                <input type="text" id="nama_tim" class="form-control" placeholder="Masukkan nama tim" required>
-            </div>
+        <div class="menu-grid">
+            <a href="pendaftaran.html" class="menu-card">
+                <span class="menu-icon">📝</span>
+                <span class="menu-title">Pendaftaran</span>
+                <span class="menu-desc">Daftarkan tim baru ke berbagai cabang olahraga yang tersedia secara mandiri.</span>
+            </a>
             
-            <div class="form-group">
-                <label for="cabang_lomba">Cabang Lomba</label>
-                <select id="cabang_lomba" class="form-control" required>
-                    <option value="" disabled selected>-- Pilih Cabang Lomba --</option>
-                    <option value="Bulu Tangkis Ganda Campuran">Bulu Tangkis Ganda Campuran</option>
-                    <option value="Futsal Putra">Futsal Putra</option>
-                    <option value="Voli Putri">Voli Putri</option>
-                </select>
-            </div>
+            <a href="scoreboard.html" class="menu-card">
+                <span class="menu-icon">📺</span>
+                <span class="menu-title">Live Score</span>
+                <span class="menu-desc">Pantau papan skor seluruh pertandingan secara terpusat dan real-time.</span>
+            </a>
 
-            <button type="submit" class="btn btn-primary" id="btnSubmit">
-                Daftarkan Tim
-            </button>
-        </form>
+            <a href="bagan.html" class="menu-card">
+                <span class="menu-icon">🏆</span>
+                <span class="menu-title">Bagan Turnamen</span>
+                <span class="menu-desc">Lihat peta perjalanan dan susunan kompetisi sistem gugur.</span>
+            </a>
+
+            <a href="panel-wasit.html" class="menu-card">
+                <span class="menu-icon">⚖️</span>
+                <span class="menu-title">Panel Wasit</span>
+                <span class="menu-desc">Akses portal khusus ofisial pertandingan untuk mengelola skor.</span>
+            </a>
+        </div>
     </div>
 
     <script src="js/api.js"></script>
-    <script src="js/pendaftaran.js"></script>
 </body>
 </html>

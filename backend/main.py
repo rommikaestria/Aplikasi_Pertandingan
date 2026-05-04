@@ -155,6 +155,32 @@ def get_skor_live(id_match: int):
         
     return dict(row)
 
+@app.get("/api/skor_all")
+def get_all_skor_live():
+    conn = get_db()
+    c = conn.cursor()
+    c.execute('''
+        SELECT s.skor_A, s.skor_B, p.id_match, p.cabang_lomba, p.babak, p.status, 
+               tA.nama_tim as nama_tim_A, tB.nama_tim as nama_tim_B
+        FROM tabel_pertandingan p
+        JOIN tabel_skor_live s ON p.id_match = s.id_match
+        LEFT JOIN tabel_peserta tA ON p.id_tim_A = tA.id
+        LEFT JOIN tabel_peserta tB ON p.id_tim_B = tB.id
+        WHERE p.id_tim_A IS NOT NULL AND p.id_tim_B IS NOT NULL
+        ORDER BY p.cabang_lomba, p.id_match ASC
+    ''')
+    matches = [dict(row) for row in c.fetchall()]
+    conn.close()
+    
+    grouped = {}
+    for m in matches:
+        cabang = m['cabang_lomba']
+        if cabang not in grouped:
+            grouped[cabang] = []
+        grouped[cabang].append(m)
+        
+    return grouped
+
 @app.post("/api/skor/{id_match}/update")
 def update_skor(id_match: int, data: UpdateSkor):
     conn = get_db()
@@ -204,26 +230,39 @@ def akhiri_pertandingan(id_match: int, data: AkhiriPertandingan):
     babak_selanjutnya = "Semi Final" if babak_sekarang == "Perempat Final" else "Final" if babak_sekarang == "Semi Final" else None
     
     if babak_selanjutnya:
-        # Cari pertandingan di babak selanjutnya yang masih kekurangan tim
-        c.execute('''SELECT id_match, id_tim_A, id_tim_B 
-                     FROM tabel_pertandingan 
-                     WHERE cabang_lomba = ? AND babak = ? AND (id_tim_A IS NULL OR id_tim_B IS NULL)
-                     ORDER BY id_match LIMIT 1''', (cabang_lomba, babak_selanjutnya))
-        next_match = c.fetchone()
+        # Tentukan urutan pertandingan saat ini di babaknya
+        c.execute("SELECT id_match FROM tabel_pertandingan WHERE cabang_lomba = ? AND babak = ? ORDER BY id_match", (cabang_lomba, babak_sekarang))
+        current_round_matches = [r['id_match'] for r in c.fetchall()]
         
-        if next_match:
-            # Update pertandingan yang sudah ada
-            if next_match['id_tim_A'] is None:
-                c.execute("UPDATE tabel_pertandingan SET id_tim_A = ? WHERE id_match = ?", (data.pemenang_id, next_match['id_match']))
-            else:
-                c.execute("UPDATE tabel_pertandingan SET id_tim_B = ? WHERE id_match = ?", (data.pemenang_id, next_match['id_match']))
-        else:
-            # Buat pertandingan baru
-            c.execute('''INSERT INTO tabel_pertandingan (cabang_lomba, babak, id_tim_A, status) 
-                         VALUES (?, ?, ?, 'pending')''', 
-                      (cabang_lomba, babak_selanjutnya, data.pemenang_id))
+        try:
+            match_index = current_round_matches.index(id_match)
+        except ValueError:
+            match_index = 0
+            
+        next_match_index = match_index // 2
+        is_tim_A = (match_index % 2 == 0) # Genap jadi tim A, Ganjil jadi tim B
+        
+        # Ambil semua pertandingan di babak selanjutnya
+        c.execute("SELECT id_match, id_tim_A, id_tim_B FROM tabel_pertandingan WHERE cabang_lomba = ? AND babak = ? ORDER BY id_match", (cabang_lomba, babak_selanjutnya))
+        next_round_matches = c.fetchall()
+        
+        # Jika pertandingan yang dituju belum terbuat, buat yang baru sampai indeksnya terpenuhi
+        while len(next_round_matches) <= next_match_index:
+            c.execute('''INSERT INTO tabel_pertandingan (cabang_lomba, babak, status) 
+                         VALUES (?, ?, 'pending')''', (cabang_lomba, babak_selanjutnya))
             new_id_match = c.lastrowid
             c.execute("INSERT INTO tabel_skor_live (id_match) VALUES (?)", (new_id_match,))
+            
+            # Refresh list
+            c.execute("SELECT id_match, id_tim_A, id_tim_B FROM tabel_pertandingan WHERE cabang_lomba = ? AND babak = ? ORDER BY id_match", (cabang_lomba, babak_selanjutnya))
+            next_round_matches = c.fetchall()
+            
+        target_next_match = next_round_matches[next_match_index]
+        
+        if is_tim_A:
+            c.execute("UPDATE tabel_pertandingan SET id_tim_A = ? WHERE id_match = ?", (data.pemenang_id, target_next_match['id_match']))
+        else:
+            c.execute("UPDATE tabel_pertandingan SET id_tim_B = ? WHERE id_match = ?", (data.pemenang_id, target_next_match['id_match']))
             
     conn.commit()
     conn.close()

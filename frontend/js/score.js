@@ -1,95 +1,73 @@
-let activeMatchId = null;
 let pollInterval = null;
 
-async function loadMatches() {
-    const cabang = document.getElementById('cabang_lomba').value;
-    if(!cabang) return;
-    
-    document.getElementById('matchSelectGroup').style.display = 'block';
-    const select = document.getElementById('match_select');
-    select.innerHTML = '<option value="" disabled selected>Memuat data...</option>';
-    
+async function fetchAllScores() {
     try {
-        const res = await fetch(`${API_BASE}/pertandingan/${encodeURIComponent(cabang)}`);
-        const matches = await res.json();
+        const res = await fetch(`${API_BASE}/skor_all`);
+        if(!res.ok) return;
+        const data = await res.json();
         
-        select.innerHTML = '<option value="" disabled selected>-- Pilih Pertandingan --</option>';
+        const container = document.getElementById('livescore_container');
         
-        // Bisa tampilkan yang pending atau ongoing
-        matches.forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m.id_match;
-            opt.textContent = `[${m.babak}] ${m.nama_tim_A || 'TBD'} vs ${m.nama_tim_B || 'TBD'} (${m.status})`;
-            select.appendChild(opt);
-        });
-    } catch(err) {
-        showToast("Gagal memuat pertandingan", true);
-    }
-}
-
-function startLive() {
-    const matchId = document.getElementById('match_select').value;
-    if(!matchId) {
-        showToast("Pilih pertandingan terlebih dahulu!", true);
-        return;
-    }
-    
-    activeMatchId = matchId;
-    document.getElementById('setupSection').style.display = 'none';
-    document.getElementById('liveSection').style.display = 'flex';
-    
-    // Tarik data pertama kali
-    fetchLiveScore();
-    
-    // Mulai polling setiap 3 detik
-    pollInterval = setInterval(fetchLiveScore, 3000);
-}
-
-async function fetchLiveScore() {
-    if(!activeMatchId) return;
-    
-    try {
-        const res = await fetch(`${API_BASE}/skor/${activeMatchId}`);
-        if(res.ok) {
-            const data = await res.json();
-            
-            document.getElementById('live_babak').textContent = data.babak;
-            document.getElementById('live_nama_A').textContent = data.nama_tim_A || "Tim A";
-            document.getElementById('live_nama_B').textContent = data.nama_tim_B || "Tim B";
-            
-            // Format 2 digit
-            const scoreA = data.skor_A.toString().padStart(2, '0');
-            const scoreB = data.skor_B.toString().padStart(2, '0');
-            
-            // Animasi halus jika skor berubah
-            const elA = document.getElementById('live_skor_A');
-            const elB = document.getElementById('live_skor_B');
-            
-            if(elA.textContent !== scoreA) {
-                elA.textContent = scoreA;
-                animateUpdate(elA);
-            }
-            
-            if(elB.textContent !== scoreB) {
-                elB.textContent = scoreB;
-                animateUpdate(elB);
-            }
-            
-            if(data.status === 'finished') {
-                clearInterval(pollInterval);
-                document.getElementById('live_babak').textContent = data.babak + " (SELESAI)";
-            }
+        if(Object.keys(data).length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding: 4rem; background: var(--card-bg); color: var(--text-muted); border-radius: 0 0 12px 12px; border: 1px solid var(--border-color);">Belum ada pertandingan yang dijadwalkan atau sedang berjalan.</div>';
+            return;
         }
+        
+        let html = '';
+        
+        for (const cabang in data) {
+            const matches = data[cabang];
+            
+            html += `<div class="sport-section">
+                        <div class="sport-title">🏆 ${cabang}</div>`;
+                        
+            matches.forEach(m => {
+                let statusText = "";
+                let statusClass = "m-status";
+                let scoreText = "-";
+                let scoreClass = "m-score";
+                
+                if(m.status === 'pending') {
+                    statusText = m.babak;
+                    scoreText = "vs";
+                } else if(m.status === 'ongoing') {
+                    statusText = `LIVE (${m.babak})`;
+                    statusClass += " ongoing";
+                    
+                    const sA = m.skor_A.toString().padStart(2, '0');
+                    const sB = m.skor_B.toString().padStart(2, '0');
+                    scoreText = `${sA} - ${sB}`;
+                    scoreClass += " live-score";
+                } else if(m.status === 'finished') {
+                    statusText = `FT (${m.babak})`;
+                    const sA = m.skor_A.toString().padStart(2, '0');
+                    const sB = m.skor_B.toString().padStart(2, '0');
+                    scoreText = `${sA} - ${sB}`;
+                }
+                
+                html += `
+                <div class="match-row">
+                    <div class="${statusClass}">${statusText}</div>
+                    <div class="m-team-a">${m.nama_tim_A}</div>
+                    <div class="${scoreClass}">${scoreText}</div>
+                    <div class="m-team-b">${m.nama_tim_B}</div>
+                </div>
+                `;
+            });
+            
+            html += `</div>`;
+        }
+        
+        // Cek jika HTML berubah sebelum inject agar tidak merusak animasi hover / berkedip tanpa alasan
+        if(container.innerHTML !== html) {
+            container.innerHTML = html;
+        }
+        
     } catch(err) {
         console.error("Gagal melakukan polling skor:", err);
     }
 }
 
-function animateUpdate(element) {
-    element.style.transform = 'scale(1.1)';
-    element.style.color = '#fff';
-    setTimeout(() => { 
-        element.style.transform = 'scale(1)'; 
-        element.style.color = ''; // kembali ke default class color
-    }, 300);
-}
+// Mulai polling saat halaman dimuat pertama kali
+fetchAllScores();
+pollInterval = setInterval(fetchAllScores, 3000);
