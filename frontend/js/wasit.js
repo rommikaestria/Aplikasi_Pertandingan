@@ -3,9 +3,30 @@ let currentTimA_id = null;
 let currentTimB_id = null;
 
 // Sederhana: Proteksi statis
+document.addEventListener("DOMContentLoaded", () => {
+    if(sessionStorage.getItem("wasit_auth") === "true") {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('mainSection').style.display = 'block';
+        
+        // Restore dropdown state if exists
+        const savedCabang = sessionStorage.getItem("wasit_cabang");
+        if(savedCabang) {
+            document.getElementById('cabang_lomba').value = savedCabang;
+            loadMatches().then(() => {
+                const savedMatch = sessionStorage.getItem("wasit_match");
+                if(savedMatch) {
+                    document.getElementById('match_select').value = savedMatch;
+                    selectMatch();
+                }
+            });
+        }
+    }
+});
+
 function login() {
     const pwd = document.getElementById('passwordInput').value;
     if(pwd === "wasit123") {
+        sessionStorage.setItem("wasit_auth", "true");
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSection').style.display = 'block';
         showToast("Login Berhasil!");
@@ -17,6 +38,7 @@ function login() {
 async function loadMatches() {
     const cabang = document.getElementById('cabang_lomba').value;
     if(!cabang) return;
+    sessionStorage.setItem("wasit_cabang", cabang);
     
     document.getElementById('matchSelectGroup').style.display = 'block';
     const select = document.getElementById('match_select');
@@ -50,6 +72,7 @@ async function loadMatches() {
 async function selectMatch() {
     currentMatchId = document.getElementById('match_select').value;
     if(!currentMatchId) return;
+    sessionStorage.setItem("wasit_match", currentMatchId);
     
     try {
         const res = await fetch(`${API_BASE}/skor/${currentMatchId}`);
