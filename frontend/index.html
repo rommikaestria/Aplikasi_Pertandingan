@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Turnamen Olahraga</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="Pendaftaran Sistem Informasi Pertandingan Olahraga">
+</head>
+<body>
+
+    <div class="glass-card">
+        <h1 class="title">Turnamen Cup</h1>
+        <p class="subtitle">Registrasi Tim Baru</p>
+
+        <form id="formDaftar">
+            <div class="form-group">
+                <label for="nama_tim">Nama Tim / Peserta</label>
+                <input type="text" id="nama_tim" class="form-control" placeholder="Masukkan nama tim" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="cabang_lomba">Cabang Lomba</label>
+                <select id="cabang_lomba" class="form-control" required>
+                    <option value="" disabled selected>-- Pilih Cabang Lomba --</option>
+                    <option value="Bulu Tangkis Ganda Campuran">Bulu Tangkis Ganda Campuran</option>
+                    <option value="Futsal Putra">Futsal Putra</option>
+                    <option value="Voli Putri">Voli Putri</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btnSubmit">
+                Daftarkan Tim
+            </button>
+        </form>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/pendaftaran.js"></script>
+</body>
+</html>

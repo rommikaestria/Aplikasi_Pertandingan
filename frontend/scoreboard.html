@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Score Pertandingan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .full-screen-board {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            width: 100%;
+        }
+        .huge-score {
+            font-size: 15rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 0 2rem;
+            text-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            font-variant-numeric: tabular-nums;
+        }
+        .team-title {
+            font-size: 3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+        .indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--success);
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Panel Setup Live Score (Bagi Operator) -->
+    <div class="glass-card wide" id="setupSection">
+        <h1 class="title">Pengaturan Live Score</h1>
+        <p class="subtitle">Pilih pertandingan yang ingin ditampilkan secara Live</p>
+        
+        <div class="form-group">
+            <label for="cabang_lomba">Pilih Cabang Lomba</label>
+            <select id="cabang_lomba" class="form-control" onchange="loadMatches()">
+                <option value="" disabled selected>-- Pilih Cabang --</option>
+                <option value="Bulu Tangkis Ganda Campuran">Bulu Tangkis Ganda Campuran</option>
+                <option value="Futsal Putra">Futsal Putra</option>
+                <option value="Voli Putri">Voli Putri</option>
+            </select>
+        </div>
+        <div class="form-group" id="matchSelectGroup" style="display: none;">
+            <label for="match_select">Pilih Pertandingan</label>
+            <select id="match_select" class="form-control">
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="startLive()">Mulai Tampilan Live</button>
+    </div>
+
+    <!-- Tampilan Live Score Raksasa (Publik) -->
+    <div class="full-screen-board" id="liveSection" style="display: none;">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <div class="vs-badge" style="font-size: 1.5rem;"><span class="indicator"></span>LIVE MATCH</div>
+            <h2 id="live_babak" style="color: var(--text-muted); margin-top: 1rem;">Babak</h2>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; width: 100%; max-width: 1200px;">
+            <!-- Tim A -->
+            <div style="flex: 1; text-align: center;">
+                <div class="team-title text-blue" id="live_nama_A">Tim A</div>
+                <div class="huge-score text-blue" id="live_skor_A">0</div>
+            </div>
+
+            <!-- VS -->
+            <div style="font-size: 3rem; font-weight: 900; color: rgba(255,255,255,0.2);">VS</div>
+
+            <!-- Tim B -->
+            <div style="flex: 1; text-align: center;">
+                <div class="team-title text-red" id="live_nama_B">Tim B</div>
+                <div class="huge-score text-red" id="live_skor_B">0</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/score.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bagan Turnamen</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .bracket-wrapper {
+            overflow-x: auto;
+            padding: 2rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            min-height: 400px;
+        }
+        
+        /* Tema Khusus untuk Gracket agar sesuai Glassmorphism */
+        .g_gracket { width: 900px; }
+        .g_team {
+            background: rgba(15, 23, 42, 0.8) !important;
+            color: #fff !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .g_winner {
+            background: linear-gradient(135deg, var(--success), #34d399) !important;
+            color: white !important;
+            border-color: white;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card wide" style="max-width: 1000px;">
+        <h1 class="title">Bagan Turnamen</h1>
+        <p class="subtitle">Sistem Gugur (Mulai dari Perempat Final)</p>
+        
+        <div class="form-group" style="max-width: 400px; margin: 0 auto 2rem auto;">
+            <select id="cabang_lomba" class="form-control" onchange="loadBagan()">
+                <option value="" disabled selected>-- Pilih Cabang untuk Melihat Bagan --</option>
+                <option value="Bulu Tangkis Ganda Campuran">Bulu Tangkis Ganda Campuran</option>
+                <option value="Futsal Putra">Futsal Putra</option>
+                <option value="Voli Putri">Voli Putri</option>
+            </select>
+        </div>
+
+        <div class="bracket-wrapper" id="wrapper">
+            <div id="bracket_container">
+                <!-- Bagan akan dirender di sini oleh jQuery Gracket -->
+                <p style="text-align:center; color: var(--text-muted); margin-top: 5rem;">Silakan pilih cabang lomba terlebih dahulu.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wajib: jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Plugin: jquery.gracket.js dari CDN GitHub -->
+    <script src="https://cdn.jsdelivr.net/gh/zettersten/jquery.gracket.js@master/jquery.gracket.min.js"></script>
+    
+    <script src="js/api.js"></script>
+    <script src="js/bracket.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Wasit</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Section Login -->
+    <div class="glass-card" id="loginSection">
+        <h1 class="title">Otorisasi Wasit</h1>
+        <p class="subtitle">Panel ini dikhususkan untuk perangkat pertandingan</p>
+        <div class="form-group">
+            <input type="password" id="passwordInput" class="form-control" placeholder="Masukkan Password Rahasia">
+        </div>
+        <button class="btn btn-primary" onclick="login()">Masuk ke Panel</button>
+    </div>
+
+    <!-- Section Panel Utama -->
+    <div class="glass-card wide" id="mainSection" style="display: none;">
+        <h1 class="title">Control Panel Wasit</h1>
+        
+        <div class="match-selector">
+            <div class="form-group">
+                <label for="cabang_lomba">Filter Cabang Lomba</label>
+                <select id="cabang_lomba" class="form-control" onchange="loadMatches()">
+                    <option value="" disabled selected>-- Pilih Cabang --</option>
+                    <option value="Bulu Tangkis Ganda Campuran">Bulu Tangkis Ganda Campuran</option>
+                    <option value="Futsal Putra">Futsal Putra</option>
+                    <option value="Voli Putri">Voli Putri</option>
+                </select>
+            </div>
+            <div class="form-group" id="matchSelectGroup" style="display: none;">
+                <label for="match_select">Pilih Pertandingan (Berjalan / Belum Mulai)</label>
+                <select id="match_select" class="form-control" onchange="selectMatch()">
+                    <option value="" disabled selected>-- Sedang Memuat... --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Panel Skor -->
+        <div id="scorePanel" style="display: none; animation: fadeIn 0.5s ease;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <span class="vs-badge" id="babak_info">Babak</span>
+            </div>
+            <div class="match-grid">
+                <!-- Team A -->
+                <div class="team-col">
+                    <div class="team-name" id="nama_tim_A">Tim A</div>
+                    <div class="score-display text-blue" id="skor_A">0</div>
+                    <div class="controls">
+                        <button class="btn btn-secondary" onclick="updateScore('a', -1)" style="flex: 0.3;">-1</button>
+                        <button class="btn btn-primary" onclick="updateScore('a', 1)">+1 POINT</button>
+                    </div>
+                </div>
+
+                <div class="vs-badge">VS</div>
+
+                <!-- Team B -->
+                <div class="team-col">
+                    <div class="team-name" id="nama_tim_B">Tim B</div>
+                    <div class="score-display text-red" id="skor_B">0</div>
+                    <div class="controls">
+                        <button class="btn btn-secondary" onclick="updateScore('b', -1)" style="flex: 0.3;">-1</button>
+                        <button class="btn btn-danger" onclick="updateScore('b', 1)">+1 POINT</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="end-match-section">
+                <div class="form-group">
+                    <label for="pemenang_select">Tentukan Pemenang</label>
+                    <select id="pemenang_select" class="form-control">
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="endMatch()">AKHIRI PERTANDINGAN & SIMPAN</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/wasit.js"></script>
+</body>
+</html>
