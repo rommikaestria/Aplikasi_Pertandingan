@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Pertandingan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --winner-color: #d97706; /* Amber 600 for light mode */
+            --score-bg: rgba(0, 0, 0, 0.05);
+        }
+        
+        [data-theme="dark"] {
+            --winner-color: #fbbf24; /* Amber 400 for dark mode */
+            --score-bg: rgba(0, 0, 0, 0.3);
+        }
+
+        .result-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px var(--box-shadow);
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .winner .team-name {
+            color: var(--winner-color);
+        }
+
+        .score-box {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--score-bg);
+            color: var(--text-main);
+            padding: 5px 15px;
+            border-radius: 8px;
+            min-width: 50px;
+            text-align: center;
+            border: 1px solid var(--input-border);
+        }
+
+        .winner .score-box {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--winner-color);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .vs-badge {
+            background: var(--danger);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin: 0 20px;
+        }
+
+        .match-meta {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .babak-badge {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card wide" style="max-width: 800px;">
+        <h1 class="title">Hasil Pertandingan</h1>
+        <p class="subtitle">Rekapitulasi Skor Akhir Pertandingan yang Telah Selesai</p>
+        
+        <div class="form-group" style="max-width: 400px; margin: 0 auto 2rem auto;">
+            <select id="filter_cabang" class="form-control" onchange="loadHasil()">
+                <option value="Semua">Semua Cabang Lomba</option>
+                <option value="Ganda Putra pertandingan basket">Ganda Putra pertandingan basket</option>
+                <option value="Ganda Putra Tenis meja">Ganda Putra Tenis meja</option>
+                <option value="Ganda Putra Volly">Ganda Putra Volly</option>
+                <option value="Ganda Putri pertandingan basket">Ganda Putri pertandingan basket</option>
+                <option value="Ganda Putri Tenis meja">Ganda Putri Tenis meja</option>
+                <option value="Ganda Putri Volly">Ganda Putri Volly</option>
+            </select>
+        </div>
+
+        <div id="hasil_container">
+            <!-- Hasil pertandingan di-render di sini -->
+            <div class="empty-state">Memuat data hasil pertandingan...</div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/hasil.js"></script>
+</body>
+</html>

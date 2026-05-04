@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,40 +8,171 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         .bracket-wrapper {
-            overflow-x: auto;
-            padding: 2rem;
-            background: rgba(0,0,0,0.2);
+            overflow-x: scroll;
+            /* Memaksa Horizontal Scrollbar selalu tampil */
+            padding: 5rem 2rem 2rem 2rem;
+            background: #171b26;
             border-radius: 16px;
-            min-height: 400px;
+            min-height: 500px;
+            position: relative;
         }
-        
-        /* Tema Khusus untuk Gracket agar sesuai Glassmorphism */
-        .g_gracket { width: 900px; }
+
+        /* Custom Scrollbar untuk Bagan */
+        .bracket-wrapper::-webkit-scrollbar {
+            height: 14px;
+            /* Sedikit lebih tebal */
+        }
+
+        .bracket-wrapper::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 6px;
+        }
+
+        .bracket-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 6px;
+        }
+
+        .bracket-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        #bracket_container {
+            width: max-content !important;
+            /* Menjamin Gracket tidak pernah membungkus ke bawah */
+        }
+
+        .g_round {
+            margin: 0 40px;
+            float: left;
+            /* WAJIB agar kolom-kolom babak berjajar horizontal */
+        }
+
+        /* Round Labels menggunakan nth-of-type untuk mengabaikan elemen canvas */
+        .g_round::before {
+            display: inline-block;
+            background: #dc2626;
+            color: #fff;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            border-radius: 4px;
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .g_round:nth-of-type(1)::before {
+            content: "ROUND 1";
+        }
+
+        .g_round:nth-of-type(2)::before {
+            content: "SEMIFINALS";
+        }
+
+        .g_round:nth-of-type(3)::before {
+            content: "FINALS";
+        }
+
+        .g_round:nth-of-type(4)::before {
+            content: "CHAMPION";
+            background: #dc2626;
+        }
+
         .g_team {
-            background: rgba(15, 23, 42, 0.8) !important;
-            color: #fff !important;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            background: #1e222e !important;
+            color: #f8fafc !important;
+            width: 220px;
+            padding: 12px 15px;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            position: relative;
+            box-sizing: border-box;
+            border: none;
+            margin-bottom: 2px;
+            /* Small gap between teams */
         }
-        .g_winner {
-            background: linear-gradient(135deg, var(--success), #34d399) !important;
-            color: white !important;
-            border-color: white;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+
+        .g_game {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        /* Team Left Borders */
+        .g_team:nth-child(1) {
+            border-left: 4px solid #ef4444;
+            /* Red for top */
+        }
+
+        .g_team:nth-child(2) {
+            border-left: 4px solid #3b82f6;
+            /* Blue for bottom */
+            margin-top: 4px;
+        }
+
+        /* The <h3> and <span> inside g_team */
+        .g_team h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .g_team h3 span {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-right: 15px;
+            min-width: 15px;
+            text-align: center;
+        }
+
+        /* Styling for the Champion Node */
+        .g_round:nth-of-type(4) .g_team {
+            border: 2px solid #fbbf24;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+            border-left: 4px solid #fbbf24;
+            overflow: visible;
+        }
+
+        /* Champion tag */
+        .g_round:nth-of-type(4) .g_team::after {
+            content: "CHAMPION";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fbbf24;
+            color: #1e222e;
+            font-size: 0.7rem;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Canvas Lines */
+        canvas {
+            z-index: 0;
+            opacity: 0.4;
         }
     </style>
 </head>
+
 <body>
 
     <div class="glass-card wide" style="max-width: 1000px;">
         <h1 class="title">Bagan Turnamen</h1>
         <p class="subtitle">Sistem Gugur (Mulai dari Perempat Final)</p>
-        
+
         <div class="form-group" style="max-width: 400px; margin: 0 auto 2rem auto;">
             <select id="cabang_lomba" class="form-control" onchange="loadBagan()">
                 <option value="" disabled selected>-- Pilih Cabang untuk Melihat Bagan --</option>
@@ -56,7 +188,8 @@
         <div class="bracket-wrapper" id="wrapper">
             <div id="bracket_container">
                 <!-- Bagan akan dirender di sini oleh jQuery Gracket -->
-                <p style="text-align:center; color: var(--text-muted); margin-top: 5rem;">Silakan pilih cabang lomba terlebih dahulu.</p>
+                <p style="text-align:center; color: var(--text-muted); margin-top: 5rem;">Silakan pilih cabang lomba
+                    terlebih dahulu.</p>
             </div>
         </div>
     </div>
@@ -65,8 +198,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Plugin: jquery.gracket.js dari CDN GitHub -->
     <script src="https://cdn.jsdelivr.net/gh/maxxintegration/Gracket@master/jquery.gracket.min.js"></script>
-    
+
     <script src="js/api.js"></script>
     <script src="js/bracket.js"></script>
 </body>
+
 </html>

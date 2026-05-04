@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap');
 
 :root {
     --bg-gradient-start: #1e293b;
@@ -45,7 +45,7 @@ body.light-mode {
 
 body {
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: radial-gradient(circle at top right, var(--bg-gradient-start), var(--bg-gradient-end));
     color: var(--text-main);
     min-height: 100vh;
@@ -125,7 +125,7 @@ body.light-mode .title {
     background: var(--input-bg);
     color: var(--text-main);
     font-size: 1.05rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     outline: none;
     transition: all 0.3s ease;
     box-sizing: border-box;
